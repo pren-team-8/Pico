@@ -1,0 +1,11 @@
+{
+    "cmake.buildBeforeRun": true,
+    "cmake.configureOnOpen": false,
+    "cmake.useCMakePresets": "always",
+    "files.associations": {
+        "dreq.h": "c",
+        "uart.h": "c",
+        "clocks.h": "c",
+        "stdlib.h": "c"
+    }
+}
