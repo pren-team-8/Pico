@@ -6,6 +6,7 @@
 #include "McuWait.h"
 
 #include "uart_communication.h"
+#include "motor_ansteuerung.h"
 
 
 #define DEBUG   (1)
@@ -19,21 +20,24 @@ int main(void) {
         timer_hw->dbgpause=0;
     #endif
     stdio_init_all();
-    McuLib_Init();
+    Motor_Ansteuerung_Init();
+    
+    //uart
+    /*
     uart_Communication_Init();
     McuWait_Init();
 
     //uart_communication
     McuWait_Waitms(2000);
     uart_communication_uart_test();
-
-
+    */
+    //motor
+    Motor_Ansteuerung_Init();
+    Motor_Hub_Test(100);
 
 
 
     //for debugging to see if the uart_test has completed
-    McuWait_Waitms(10000);
-    McuWait_Waitms(500);  
 
     for(;;) {}
     return 0;
