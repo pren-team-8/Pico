@@ -9,16 +9,11 @@
 #include "motor_ansteuerung.h"
 
 
-#define DEBUG   (1)
-
 uint32_t SystemCoreClock = 120000000;
 
 
 
 int main(void) {
-    #if DEBUG /*workaroung for CMIS-DAP*/
-        timer_hw->dbgpause=0;
-    #endif
     stdio_init_all();
     Motor_Ansteuerung_Init();
     
@@ -32,8 +27,7 @@ int main(void) {
     uart_communication_uart_test();
     */
     //motor
-    Motor_Ansteuerung_Init();
-    Motor_Hub_Test(100);
+    Hub_Bewegung(1,1000);
 
 
 

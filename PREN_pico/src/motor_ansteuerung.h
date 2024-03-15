@@ -7,7 +7,8 @@ void Motor_Ansteuerung_Init(void);
 // initialisiert die Pins etc. für die Motoren
 void Motoren_Init(void);
 
-// Test-Funktion für Motor
-void Motor_Hub_Test(int);
+// Bewegungen
+void Hub_Bewegung(bool dir,uint16_t steps);
+void Rev_Bewegung(bool dir,uint16_t steps);
 
 #endif
