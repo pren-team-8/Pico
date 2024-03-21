@@ -9,4 +9,6 @@ void uart_communication_uart_test(void);
 void uart_Communication_Init(void);
 void uart_Communication_Deinit(void);
 
+void uartread(void);
+
 #endif

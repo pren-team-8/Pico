@@ -4,6 +4,9 @@
 #include "uart_communication.h"
 #include "McuWait.h"
 
+//test
+#include "blinky_rp_sdk.h"
+
 #define UART_ID_UART0 uart0
 #define UART_ID_UART1 uart1
 #define BAUD_RATE 115200
@@ -22,6 +25,7 @@
 char testMessage[100];
 static uint8_t index=0;
 
+
 //ISR Callback Function for UART0 RX Interrupt
 void on_uart_rx_uart0() {
     while (uart_is_readable(UART_ID_UART0)) { // uart_is_readable -> Determine whether data is waiting in the RX FIFO.
@@ -38,6 +42,17 @@ void on_uart_rx_uart1() {
         testMessage[index]=j;
         index++;
     }
+}
+
+
+//test
+void uartread(void){
+    while (uart_is_readable(UART_ID_UART1)) { // uart_is_readable -> Determine whether data is waiting in the RX FIFO.
+        char j = uart_getc(UART_ID_UART1);
+        testMessage[index]=j;
+        index++;
+    }
+    //McuWait_Waitms(10);
 }
 
 void uart_communication_uart_test(void){
@@ -77,12 +92,13 @@ void uart_Communication_Init() {
     uart_set_fifo_enabled(UART_ID_UART0, false);
     uart_set_fifo_enabled(UART_ID_UART1, false);
 
+    
     // Set up a RX interrupt
     // We need to set up the handler first
     // Select correct interrupt for the UART we are using
     int UART_IRQ_UART0 = UART_ID_UART0 == uart0 ? UART0_IRQ : UART1_IRQ;
     int UART_IRQ_UART1 = UART_ID_UART1 == uart0 ? UART0_IRQ : UART1_IRQ;
-
+    
     // And set up and enable the interrupt handlers
     irq_set_exclusive_handler(UART_IRQ_UART0, on_uart_rx_uart0);
     irq_set_enabled(UART_IRQ_UART0, true);
