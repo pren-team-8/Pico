@@ -25,7 +25,7 @@ void Motoren_Init(void){
     McuGPIO_Config_t config_hub_step;
     McuGPIO_GetDefaultConfig(&config_hub_step);
     // die GPIO Pin Nummer zuweisen
-    config_hub_dir.hw.pin = 12;
+    config_hub_dir.hw.pin = 11;
     config_hub_step.hw.pin = 13;
     // device handle auf die Variable setzen
     Hub_Dir_Pin = McuGPIO_InitGPIO(&config_hub_dir);
@@ -44,12 +44,27 @@ void Hub_Bewegung(bool dir, uint16_t steps){
         McuGPIO_SetLow(Hub_Dir_Pin);
     }
     // steps
-    for(int i=0 ; i<steps ; i++){
-        McuGPIO_SetHigh(Hub_Step_Pin);
-        //McuWait_Waitms(50);
-        McuGPIO_SetLow(Hub_Step_Pin);
-        //McuWait_Waitms(50);
-    } 
+    while(true){
+        McuGPIO_SetHigh(Hub_Dir_Pin);
+        //McuWait_Waitms(2000);
+        //for(int i=0 ; i<steps ; i++){
+            McuGPIO_SetLow(Hub_Step_Pin);
+            McuWait_Waitus(500);
+            McuGPIO_SetHigh(Hub_Step_Pin);
+            McuWait_Waitus(500);
+        //}
+        //McuWait_Waitms(2000);
+        //McuGPIO_SetLow(Hub_Dir_Pin);  
+        //McuWait_Waitms(2000);  
+        //for(int i=0 ; i<steps ; i++){
+        //    McuGPIO_SetLow(Hub_Step_Pin);
+        //    McuWait_Waitus(500);
+        //    McuGPIO_SetHigh(Hub_Step_Pin);
+        //    McuWait_Waitus(500);
+        //}
+        //McuWait_Waitms(2000);
+    }
+
 }
 
 void Rev_Bewegung(bool dir, uint16_t steps){

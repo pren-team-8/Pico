@@ -4,9 +4,6 @@
 #include "uart_communication.h"
 #include "McuWait.h"
 
-//test
-#include "blinky_rp_sdk.h"
-
 #define UART_ID_UART0 uart0
 #define UART_ID_UART1 uart1
 #define BAUD_RATE 115200
@@ -22,16 +19,16 @@
 #define UART_TX_PIN_UART1 4
 #define UART_RX_PIN_UART1 5
 
-char testMessage[100];
-static uint8_t index=0;
+char uartRxBuffer[100];
+uint8_t indexRxBuffer = 0;
 
 
 //ISR Callback Function for UART0 RX Interrupt
 void on_uart_rx_uart0() {
     while (uart_is_readable(UART_ID_UART0)) { // uart_is_readable -> Determine whether data is waiting in the RX FIFO.
         char j = uart_getc(UART_ID_UART0);
-        testMessage[index]=j;
-        index++;
+        uartRxBuffer[indexRxBuffer]=j;
+        indexRxBuffer++;
     }
 }
 
@@ -39,20 +36,9 @@ void on_uart_rx_uart0() {
 void on_uart_rx_uart1() {
     while (uart_is_readable(UART_ID_UART1)) { // uart_is_readable -> Determine whether data is waiting in the RX FIFO.
         char j = uart_getc(UART_ID_UART1);
-        testMessage[index]=j;
-        index++;
+        uartRxBuffer[indexRxBuffer]=j;
+        indexRxBuffer++;
     }
-}
-
-
-//test
-void uartread(void){
-    while (uart_is_readable(UART_ID_UART1)) { // uart_is_readable -> Determine whether data is waiting in the RX FIFO.
-        char j = uart_getc(UART_ID_UART1);
-        testMessage[index]=j;
-        index++;
-    }
-    //McuWait_Waitms(10);
 }
 
 void uart_communication_uart_test(void){

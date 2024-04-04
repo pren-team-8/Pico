@@ -8,33 +8,32 @@
 #include "uart_communication.h"
 #include "motor_ansteuerung.h"
 #include "FreeRtosPren.h"
+#include "aktoren.h"
 
 
-
+//MCUwait
 uint32_t SystemCoreClock = 120000000;
-
 
 
 int main(void) {
     stdio_init_all();
-    Motor_Ansteuerung_Init();
-    
-    //uart
-    uart_Communication_Init();
     McuWait_Init();
 
-    
-    while(true){
-        uart_communication_uart_test();
-        McuWait_Waitms(5000);
-        //uartread();
-    }
+    /*INIT*/
+    //Motor Init
+    Motor_Ansteuerung_Init();
+    //uart
+    uart_Communication_Init();
+    //aktoren
+    aktorenInit();
 
-    //FreeRtos
+    Hub_Bewegung(true,3000);
+    // while(true){
+    //     pushHubmagnet();
+    // }
+    //FreeRtos start
     //FreeRtosInit();
     //vTaskStartScheduler();
-
-    //for debugging to see if the uart_test has completed
 
     for(;;) {}
     return 0;
