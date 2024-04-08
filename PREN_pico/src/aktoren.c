@@ -17,6 +17,8 @@ static McuGPIO_Handle_t Lautsprecher_Pin;
 
 
 void aktorenInit(void){
+    McuGPIO_Init();
+
     McuGPIO_Config_t config_Hubmagnet1_Pin;
     McuGPIO_Config_t config_Hubmagnet2_Pin;
     McuGPIO_Config_t config_Hubmagnet3_Pin;

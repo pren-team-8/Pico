@@ -3,6 +3,7 @@
 #include "hardware/irq.h"
 #include "uart_communication.h"
 #include "McuWait.h"
+#include "McuRB.h"
 
 #define UART_ID_UART0 uart0
 #define UART_ID_UART1 uart1
@@ -19,25 +20,45 @@
 #define UART_TX_PIN_UART1 4
 #define UART_RX_PIN_UART1 5
 
-char uartRxBuffer[100];
-uint8_t indexRxBuffer = 0;
+// Ringbuffer
+extern McuRB_Handle_t Ringbuffer;
+McuRB_Config_t Ringbuffer_config;
+char Uart[100];
+char tempUartArray[5];
+char tempUart;
+uint8_t tempUart_index = 0;
+uint8_t uart_index = 0;
+
+char uartxBuffer[100];
+uint8_t indexxBuffer = 0;
+
 
 
 //ISR Callback Function for UART0 RX Interrupt
 void on_uart_rx_uart0() {
     while (uart_is_readable(UART_ID_UART0)) { // uart_is_readable -> Determine whether data is waiting in the RX FIFO.
-        char j = uart_getc(UART_ID_UART0);
-        uartRxBuffer[indexRxBuffer]=j;
-        indexRxBuffer++;
+        char temp = uart_getc(UART_ID_UART0);
+        McuRB_Put(Ringbuffer,&temp);
+        McuRB_Get(Ringbuffer,&uartxBuffer[indexxBuffer]);
+        indexxBuffer++;
     }
+    //tempUart[uart_index] = '\0';
+    //char Uart_receive = tempUart;
+    //for(int h = 0;h<5;h++){
+    //    McuRB_Get(Ringbuffer,&tempUart);
+    //    tempUartArray[h] = tempUart;
+    //}
+    //McuWait_Waitms(50);
 }
 
 //ISR Callback Function for UART1 RX Interrupt
 void on_uart_rx_uart1() {
     while (uart_is_readable(UART_ID_UART1)) { // uart_is_readable -> Determine whether data is waiting in the RX FIFO.
         char j = uart_getc(UART_ID_UART1);
-        uartRxBuffer[indexRxBuffer]=j;
-        indexRxBuffer++;
+        uint8_t result = McuRB_Put(Ringbuffer,&j);
+        // if(result != "ERR_OK"){
+        //     //Error Handling
+        // }
     }
 }
 
@@ -48,6 +69,15 @@ void uart_communication_uart_test(void){
 }
 
 void uart_Communication_Init() {
+
+    //Init Ringbuffer
+    McuRB_Init();
+    McuRB_GetDefaultconfig(&Ringbuffer_config);
+    Ringbuffer = McuRB_InitRB(&Ringbuffer_config);
+
+    McuRB_GetDefaultconfig(&Ringbuffer_config);
+    Ringbuffer = McuRB_InitRB(&Ringbuffer_config);
+
     // Set up our UART with a basic baud rate.
     uart_init(UART_ID_UART0, 2400);
     uart_init(UART_ID_UART1, 2400);

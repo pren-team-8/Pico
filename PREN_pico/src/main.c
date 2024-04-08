@@ -10,9 +10,18 @@
 #include "FreeRtosPren.h"
 #include "aktoren.h"
 
+#include "McuRB.h"
+
+//Ringbuffer
+McuRB_Handle_t Ringbuffer = NULL;
+McuRB_Handle_t UartReceiveBuffer = NULL;
+
 
 //MCUwait
 uint32_t SystemCoreClock = 120000000;
+
+//test
+char test1;
 
 
 int main(void) {
@@ -24,16 +33,17 @@ int main(void) {
     Motor_Ansteuerung_Init();
     //uart
     uart_Communication_Init();
+
     //aktoren
     aktorenInit();
 
-    Hub_Bewegung(true,3000);
+    //Hub_Bewegung(true,3000);
     // while(true){
     //     pushHubmagnet();
     // }
     //FreeRtos start
-    //FreeRtosInit();
-    //vTaskStartScheduler();
+    FreeRtosInit();
+    vTaskStartScheduler();
 
     for(;;) {}
     return 0;

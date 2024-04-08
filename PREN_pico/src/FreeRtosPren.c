@@ -4,10 +4,17 @@
 #include "uart_communication.h"
 #include <string.h>
 #include "McuWait.h"
+#include "McuRB.h"
 
-//uart
-extern char uartRxBuffer[100];
-extern uint8_t indexRxBuffer;
+//Ringbuffer
+extern McuRB_Handle_t Ringbuffer;
+char Befehl[5];
+uint8_t index_Befehl = 0;
+char data;
+
+//test
+char uartRxBuffer[100];
+uint8_t indexRxBuffer = 0;
 
 static void Strommessung(void *pv) {
     for(;;){
@@ -19,31 +26,23 @@ static void Strommessung(void *pv) {
 
 static void Ansteuerung(void *pv) {
     for(;;){
-        vTaskDelay(pdMS_TO_TICKS(500));
-        //TODO Ansteuerung
-            // Überprüfen, ob es genug Zeichen im Puffer gibt, um einen vollständigen Befehl zu lesen
-        while (indexRxBuffer >= 10) {
-            // Extrahiere den Befehl aus den ersten 10 Zeichen im Puffer
-            char command[11]; // Stellen Sie sicher, dass ein zusätzliches Zeichen für das Null-Byte vorhanden ist
-            memcpy(command, uartRxBuffer, 10);
-            command[10] = '\0'; // Null-Byte hinzufügen, um eine C-String zu erstellen
-
-            // Hier können Sie den Befehl verarbeiten, z.B. anhand einer Switch-Anweisung
-            // Die Verarbeitung des Befehls erfolgt basierend auf dem Wert von command
-            // Nehmen Sie an, dass jeder Befehl aus 10 Zeichen besteht
-            if (strcmp(command, "Test      ") == 0) {
-                McuWait_Waitms(10);
-               // Aktion für den Befehl "COMMAND001"
-            } else if (strcmp(command, "COMMAND002") == 0) {
-                // Aktion für den Befehl "COMMAND002"
-            } else {
-                // Unbekannter Befehl, möglicherweise Fehlerbehandlung
-            }
-
-        // Verschieben Sie den Index, um den verarbeiteten Befehl aus dem Puffer zu entfernen
-        //indexRxBuffer -= 10;
-        //memmove(uartRxBuffer, uartRxBuffer + 10, indexRxBuffer);
-    }
+        vTaskDelay(pdMS_TO_TICKS(5000));
+        //while (data != '\040')
+        
+        // for(int x = 0; x < 5 ; x++)
+        // {
+        //     McuRB_Get(Ringbuffer,&data);
+        //     if(data == '\000'){
+        //         //Buffer leer
+        //         break;
+        //     }
+        //     Befehl[index_Befehl] = data;
+        // }
+        // char Befehl1 = (char)Befehl;
+        // index_Befehl = 0;
+        // if(Befehl[0] != '\000'){
+        //     McuWait_Waitms(10);
+        // }
     }
 }
 
