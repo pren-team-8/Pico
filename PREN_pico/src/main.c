@@ -4,6 +4,7 @@
 
 #include "McuLib.h"
 #include "McuWait.h"
+#include "McuGPIO.h"
 
 #include "uart_communication.h"
 #include "motor_ansteuerung.h"
@@ -16,6 +17,18 @@
 McuRB_Handle_t Ringbuffer = NULL;
 McuRB_Handle_t UartReceiveBuffer = NULL;
 
+//Hubmagnete
+McuGPIO_Handle_t Hubmagnet1_Pin;
+McuGPIO_Handle_t Hubmagnet2_Pin;
+McuGPIO_Handle_t Hubmagnet3_Pin;
+McuGPIO_Handle_t Hubmagnet4_Pin;
+
+//Endschalter
+McuGPIO_Handle_t Endschalter1_Pin;
+McuGPIO_Handle_t Endschalter2_Pin;
+
+//Lautsprecher
+McuGPIO_Handle_t Lautsprecher_Pin;
 
 //MCUwait
 uint32_t SystemCoreClock = 120000000;

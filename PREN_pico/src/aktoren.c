@@ -3,17 +3,17 @@
 #include "McuLib.h"
 
 //Hubmagnete
-static McuGPIO_Handle_t Hubmagnet1_Pin;
-static McuGPIO_Handle_t Hubmagnet2_Pin;
-static McuGPIO_Handle_t Hubmagnet3_Pin;
-static McuGPIO_Handle_t Hubmagnet4_Pin;
+extern McuGPIO_Handle_t Hubmagnet1_Pin;
+extern McuGPIO_Handle_t Hubmagnet2_Pin;
+extern McuGPIO_Handle_t Hubmagnet3_Pin;
+extern McuGPIO_Handle_t Hubmagnet4_Pin;
 
 //Endschalter
-static McuGPIO_Handle_t Endschalter1_Pin;
-static McuGPIO_Handle_t Endschalter2_Pin;
+extern McuGPIO_Handle_t Endschalter1_Pin;
+extern McuGPIO_Handle_t Endschalter2_Pin;
 
 //Lautsprecher
-static McuGPIO_Handle_t Lautsprecher_Pin;
+extern McuGPIO_Handle_t Lautsprecher_Pin;
 
 
 void aktorenInit(void){
@@ -71,14 +71,14 @@ void aktorenInit(void){
 }
 
 //tested
-void pushHubmagnet(){
-    McuGPIO_SetHigh(Hubmagnet1_Pin);
+void pushHubmagnet(McuGPIO_Handle_t Hubmagnet){
+    McuGPIO_SetHigh(Hubmagnet);
     McuWait_Waitms(300);
-    McuGPIO_SetLow(Hubmagnet1_Pin);
+    McuGPIO_SetLow(Hubmagnet);
 }
 
 //not tested
-bool Enschalter(McuGPIO_Handle_t Endschalter){
+bool Endschalter(McuGPIO_Handle_t Endschalter){
     if(McuGPIO_IsLow(Endschalter)){
         return false;
     } else {

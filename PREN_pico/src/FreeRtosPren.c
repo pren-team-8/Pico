@@ -5,12 +5,26 @@
 #include <string.h>
 #include "McuWait.h"
 #include "McuRB.h"
+#include "McuGPIO.h"
 
 //Ringbuffer
 extern McuRB_Handle_t Ringbuffer;
 char Befehl[5];
 uint8_t index_Befehl = 0;
 char data;
+
+//Hubmagnete
+extern McuGPIO_Handle_t Hubmagnet1_Pin;
+extern McuGPIO_Handle_t Hubmagnet2_Pin;
+extern McuGPIO_Handle_t Hubmagnet3_Pin;
+extern McuGPIO_Handle_t Hubmagnet4_Pin;
+
+//Endschalter
+extern McuGPIO_Handle_t Endschalter1_Pin;
+extern McuGPIO_Handle_t Endschalter2_Pin;
+
+//Lautsprecher
+extern McuGPIO_Handle_t Lautsprecher_Pin;
 
 //test
 char uartRxBuffer[100];
@@ -76,23 +90,6 @@ static void Ansteuerung(void *pv) {
                 }
             }
         }
-
-        //while (data != '\040')
-        
-        // for(int x = 0; x < 5 ; x++)
-        // {
-        //     McuRB_Get(Ringbuffer,&data);
-        //     if(data == '\000'){
-        //         //Buffer leer
-        //         break;
-        //     }
-        //     Befehl[index_Befehl] = data;
-        // }
-        // char Befehl1 = (char)Befehl;
-        // index_Befehl = 0;
-        // if(Befehl[0] != '\000'){
-        //     McuWait_Waitms(10);
-        // }
     }
 }
 

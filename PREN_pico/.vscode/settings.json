@@ -10,6 +10,7 @@
         "mcugpio.h": "c",
         "mcuwait.h": "c",
         "motor_ansteuerung.h": "c",
-        "mculib.h": "c"
+        "mculib.h": "c",
+        "mcurb.h": "c"
     }
 }
