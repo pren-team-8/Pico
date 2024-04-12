@@ -23,11 +23,6 @@
 // Ringbuffer
 extern McuRB_Handle_t Ringbuffer;
 McuRB_Config_t Ringbuffer_config;
-char Uart[100];
-char tempUartArray[5];
-char tempUart;
-uint8_t tempUart_index = 0;
-uint8_t uart_index = 0;
 
 char uartxBuffer[100];
 uint8_t indexxBuffer = 0;
@@ -39,16 +34,9 @@ void on_uart_rx_uart0() {
     while (uart_is_readable(UART_ID_UART0)) { // uart_is_readable -> Determine whether data is waiting in the RX FIFO.
         char temp = uart_getc(UART_ID_UART0);
         McuRB_Put(Ringbuffer,&temp);
-        McuRB_Get(Ringbuffer,&uartxBuffer[indexxBuffer]);
-        indexxBuffer++;
+        //McuRB_Get(Ringbuffer,&uartxBuffer[indexxBuffer]);
+        //indexxBuffer++;
     }
-    //tempUart[uart_index] = '\0';
-    //char Uart_receive = tempUart;
-    //for(int h = 0;h<5;h++){
-    //    McuRB_Get(Ringbuffer,&tempUart);
-    //    tempUartArray[h] = tempUart;
-    //}
-    //McuWait_Waitms(50);
 }
 
 //ISR Callback Function for UART1 RX Interrupt

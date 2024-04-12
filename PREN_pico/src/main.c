@@ -33,9 +33,12 @@ int main(void) {
     Motor_Ansteuerung_Init();
     //uart
     uart_Communication_Init();
-
     //aktoren
     aktorenInit();
+    // char Temp[] = {'P','o','s'};
+    // for(int i = 0; i<3; i++){
+    //     McuRB_Put(Ringbuffer,&Temp[i]);
+    // }
 
     //Hub_Bewegung(true,3000);
     // while(true){
