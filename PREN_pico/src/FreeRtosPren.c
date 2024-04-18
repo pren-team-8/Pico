@@ -7,6 +7,9 @@
 #include "McuRB.h"
 #include "McuGPIO.h"
 
+//Steps für 90 GRad
+#define STEPS_FOR_NINETEEN_DEGRES (90)
+
 //Ringbuffer
 extern McuRB_Handle_t Ringbuffer;
 char Befehl[5];
@@ -35,10 +38,49 @@ char ElementRingBuffer;
 
 //Positionspeicherung an welcher die Würfel liegen
 char Pos;
-char Col;
+char Col;       //1 = Rot, 2 = Blau, 3 = Gelb
+
+//Char-Array für die Positionen des Revolvers
+char RevolverPos1[4] = {'1', '2', '3', '0'};
+char RevolverPos2[4] = {'0', '1', '2', '3'};
+char RevolverPos3[4] = {'3', '0', '1', '2'};
+char RevolverPos4[4] = {'2', '3', '0', '1'};
+
+//Positionsortung des Revolvers
+bool direction = 0;      // 1 = Uhrzeigersinn, 0 = gegenUhrzeigersinn
+uint8_t steps = 0;          // Wieviele Steps muss der Motor machen
+
+//Momentanposition des Revolvers
+uint8_t RevolverCurrentPos = 0;
+uint8_t RevolverPos = 0;      
 
 void RevolverLogik(char pos,char col){ // Hier sollte die Logik entstehen, wie man nun den Revolver bewegen muss damit der Würfel mit der entsprechenden Farbe am richtigen Ort liegt
-
+    // - 48 um ein char in ein int umzuwandeln, 1 laut Asci Tabelle Dec 49
+    //An welche Position muss der Revolver
+    if(RevolverPos1[pos-49] == col){
+        RevolverPos = 1;
+    } else if(RevolverPos2[pos-49] == col){
+        RevolverPos = 2;
+    } else if(RevolverPos3[pos-49] == col){
+        RevolverPos = 3;
+    } else if(RevolverPos4[pos-49] == col){
+        RevolverPos = 4;
+    } else {
+        //ERROR
+    }
+    //Direction
+    if(RevolverCurrentPos > RevolverPos){
+        direction = 0;
+        steps = RevolverCurrentPos - RevolverPos;
+    } else if (RevolverCurrentPos < RevolverPos){
+        direction = 1;
+        steps = RevolverPos - RevolverCurrentPos;
+    } else {
+        //ERROR
+    }
+    //Steps
+    steps = steps * STEPS_FOR_NINETEEN_DEGRES;
+    Rev_Bewegung(direction,steps);
 }
 
 void CommandEnd(void){  // Alles für den Befehl End. Herunterfahren und zusammenstossen. Hochfahren. Sobald nach oben gefahren, Buzzer auslösen.
@@ -75,7 +117,7 @@ static void Ansteuerung(void *pv) {
                     McuRB_Get(Ringbuffer,&ElementRingBuffer);
                     if(ElementRingBuffer == 's');   //Befehl POS
                     {
-                        McuRB_Get(Ringbuffer,&ElementRingBuffer);
+                        //McuRB_Get(Ringbuffer,&ElementRingBuffer);
                         CommandPos();
                     }
                 }

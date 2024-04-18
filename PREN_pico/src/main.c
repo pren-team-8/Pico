@@ -33,9 +33,6 @@ McuGPIO_Handle_t Lautsprecher_Pin;
 //MCUwait
 uint32_t SystemCoreClock = 120000000;
 
-//test
-char test1;
-
 
 int main(void) {
     stdio_init_all();
@@ -48,16 +45,15 @@ int main(void) {
     uart_Communication_Init();
     //aktoren
     aktorenInit();
-    // char Temp[] = {'P','o','s'};
-    // for(int i = 0; i<3; i++){
-    //     McuRB_Put(Ringbuffer,&Temp[i]);
-    // }
+    char Temp[] = {'P','o','s','1'};
+    for(int i = 0; i<4; i++){
+         McuRB_Put(Ringbuffer,&Temp[i]);
+    }
+    char Temp1[] = {'C','o','l','1'};
+    for(int i = 0; i<4; i++){
+         McuRB_Put(Ringbuffer,&Temp[i]);
+    }
 
-    //Hub_Bewegung(true,3000);
-    // while(true){
-    //     pushHubmagnet();
-    // }
-    //FreeRtos start
     FreeRtosInit();
     vTaskStartScheduler();
 

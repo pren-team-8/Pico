@@ -19,7 +19,7 @@ void Motor_Ansteuerung_Init(void){
 }
 
 void Motoren_Init(void){
-    // erstellt eine Konfigurationsvariable und holt die Standardkonfiguration
+    //HUB erstellt eine Konfigurationsvariable und holt die Standardkonfiguration
     McuGPIO_Config_t config_hub_dir;
     McuGPIO_GetDefaultConfig(&config_hub_dir);
     McuGPIO_Config_t config_hub_step;
@@ -33,6 +33,21 @@ void Motoren_Init(void){
     // Als Output konfigurieren
     McuGPIO_SetAsOutput(Hub_Dir_Pin, false);
     McuGPIO_SetAsOutput(Hub_Step_Pin, false);
+
+    //REVOLVER erstellt eine Konfigurationsvariable und holt die Standardkonfiguration
+    McuGPIO_Config_t config_Rev_dir;
+    McuGPIO_GetDefaultConfig(&config_Rev_dir);
+    McuGPIO_Config_t config_Rev_step;
+    McuGPIO_GetDefaultConfig(&config_Rev_step);
+    // die GPIO Pin Nummer zuweisen
+    config_Rev_dir.hw.pin = 11;
+    config_Rev_step.hw.pin = 13;
+    // device handle auf die Variable setzen
+    Rev_Dir_Pin = McuGPIO_InitGPIO(&config_Rev_dir);
+    Rev_Step_Pin = McuGPIO_InitGPIO(&config_Rev_step);
+    // Als Output konfigurieren
+    McuGPIO_SetAsOutput(Rev_Dir_Pin, false);
+    McuGPIO_SetAsOutput(Rev_Step_Pin, false);
 }
 
 void Hub_Bewegung(bool dir, uint16_t steps){
@@ -44,27 +59,25 @@ void Hub_Bewegung(bool dir, uint16_t steps){
         McuGPIO_SetLow(Hub_Dir_Pin);
     }
     // steps
-    while(true){
-        McuGPIO_SetHigh(Hub_Dir_Pin);
-        //McuWait_Waitms(2000);
-        //for(int i=0 ; i<steps ; i++){
-            McuGPIO_SetLow(Hub_Step_Pin);
-            McuWait_Waitus(500);
-            McuGPIO_SetHigh(Hub_Step_Pin);
-            McuWait_Waitus(500);
-        //}
+    // while(true){
+    //     McuGPIO_SetHigh(Hub_Dir_Pin);
+    //     //McuWait_Waitms(2000);
+    //     //for(int i=0 ; i<steps ; i++){
+    //         McuGPIO_SetLow(Hub_Step_Pin);
+    //         McuWait_Waitus(500);
+    //         McuGPIO_SetHigh(Hub_Step_Pin);
+    //         McuWait_Waitus(500);
+    //     //}
         //McuWait_Waitms(2000);
         //McuGPIO_SetLow(Hub_Dir_Pin);  
         //McuWait_Waitms(2000);  
-        //for(int i=0 ; i<steps ; i++){
-        //    McuGPIO_SetLow(Hub_Step_Pin);
-        //    McuWait_Waitus(500);
-        //    McuGPIO_SetHigh(Hub_Step_Pin);
-        //    McuWait_Waitus(500);
-        //}
-        //McuWait_Waitms(2000);
+    for(int i=0 ; i<steps ; i++){
+        McuGPIO_SetLow(Hub_Step_Pin);
+        McuWait_Waitus(500);
+        McuGPIO_SetHigh(Hub_Step_Pin);
+        McuWait_Waitus(500);
     }
-
+    McuWait_Waitms(5000);
 }
 
 void Rev_Bewegung(bool dir, uint16_t steps){
@@ -77,9 +90,10 @@ void Rev_Bewegung(bool dir, uint16_t steps){
     }
     // steps
     for(int i=0 ; i<steps ; i++){
-        McuGPIO_SetHigh(Rev_Step_Pin);
-        McuWait_Waitms(50);
         McuGPIO_SetLow(Rev_Step_Pin);
-        McuWait_Waitms(50);
-    } 
+        McuWait_Waitus(500);
+        McuGPIO_SetHigh(Rev_Step_Pin);
+        McuWait_Waitus(500);
+    }
+    McuWait_Waitms(500);
 }
