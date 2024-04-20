@@ -21,6 +21,7 @@ target_link_libraries(
   PRIVATE pico_stdio_semihosting
   PRIVATE pico_stdio_usb
   PRIVATE pico_stdio_uart
+  PRIVATE hardware_adc
 ) 
 
 # target_include_directories: Libraries need to publish their header files 

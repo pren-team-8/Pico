@@ -11,6 +11,8 @@
         "mcuwait.h": "c",
         "motor_ansteuerung.h": "c",
         "mculib.h": "c",
-        "mcurb.h": "c"
+        "mcurb.h": "c",
+        "gpio.h": "c",
+        "timer.h": "c"
     }
 }
