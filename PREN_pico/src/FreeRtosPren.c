@@ -3,9 +3,12 @@
 #include "motor_ansteuerung.h"
 #include "uart_communication.h"
 #include <string.h>
+#include <stdio.h>
 #include "McuWait.h"
 #include "McuRB.h"
 #include "McuGPIO.h"
+#include "StromSensor.h"
+#include "aktoren.h"
 
 //Steps für 90 GRad
 #define STEPS_FOR_NINETEEN_DEGRES (90)
@@ -51,8 +54,8 @@ bool direction = 0;      // 1 = Uhrzeigersinn, 0 = gegenUhrzeigersinn
 uint8_t steps = 0;          // Wieviele Steps muss der Motor machen
 
 //Momentanposition des Revolvers
-uint8_t RevolverCurrentPos = 0;
-uint8_t RevolverPos = 0;      
+uint8_t RevolverCurrentPos = 1;
+uint8_t RevolverPos = 1;      
 
 void RevolverLogik(char pos,char col){ // Hier sollte die Logik entstehen, wie man nun den Revolver bewegen muss damit der Würfel mit der entsprechenden Farbe am richtigen Ort liegt
     // - 48 um ein char in ein int umzuwandeln, 1 laut Asci Tabelle Dec 49
@@ -69,7 +72,7 @@ void RevolverLogik(char pos,char col){ // Hier sollte die Logik entstehen, wie m
         //ERROR
     }
     //Direction
-    if(RevolverCurrentPos > RevolverPos){
+    if(RevolverCurrentPos > RevolverPos){ 
         direction = 0;
         steps = RevolverCurrentPos - RevolverPos;
     } else if (RevolverCurrentPos < RevolverPos){
@@ -81,6 +84,29 @@ void RevolverLogik(char pos,char col){ // Hier sollte die Logik entstehen, wie m
     //Steps
     steps = steps * STEPS_FOR_NINETEEN_DEGRES;
     Rev_Bewegung(direction,steps);
+    //update der RevolverPosition
+    RevolverCurrentPos = RevolverPos;
+
+    //Welches Hubmagnet muss auslösen
+    //Datentyp casten
+    int pos_int = pos -'0';
+    switch(pos) {
+        case 1:
+            pushHubmagnet(Hubmagnet1_Pin);
+            break;
+        case 2:
+            pushHubmagnet(Hubmagnet2_Pin);
+            break;
+        case 3:
+            pushHubmagnet(Hubmagnet3_Pin);
+            break;
+        case 4:
+            pushHubmagnet(Hubmagnet4_Pin);
+            break;
+        default:
+            //Fehlerbehandlung
+            break;
+    }
 }
 
 void CommandEnd(void){  // Alles für den Befehl End. Herunterfahren und zusammenstossen. Hochfahren. Sobald nach oben gefahren, Buzzer auslösen.
@@ -100,13 +126,24 @@ static void Strommessung(void *pv) {
     for(;;){
         vTaskDelay(pdMS_TO_TICKS(10000));
         //TODO Strommessung
-        
+        char Wert5V[10]; // String zum Speichern des Werts
+        char Wert12V[10]; // String zum Speichern des Werts
+
+        // Den Wert in einen String konvertieren ---- Funktionien funktionieren noch nicht, da AD-Wandler sich aufhängt, evt will nichts angeschlossen ist
+        //sprintf(Wert5V, "%d", read_Sensor_5V());
+        //sprintf(Wert12V, "%d", read_Sensor_12V());
+
+        // Den Wert schicken
+        uart_send(Wert5V);
+        uart_send("\n\r");
+        uart_send(Wert12V);
+        uart_send("\n\r");
     }
 }
 
 static void Ansteuerung(void *pv) {
     for(;;){
-        vTaskDelay(pdMS_TO_TICKS(20));
+        vTaskDelay(pdMS_TO_TICKS(5000));
         McuRB_Get(Ringbuffer,&ElementRingBuffer);
         if(ElementRingBuffer == '\000'){ //Befehl noch nicht angekommen oder keiner vorhanden
             
@@ -166,6 +203,6 @@ void InitTaskAnsteuerung(void){
 void FreeRtosInit(void){
     McuRTOS_Init();
     InitTaskAnsteuerung();
-    InitTaskStrommessung();
+    //InitTaskStrommessung();
 }
 

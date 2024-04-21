@@ -3,16 +3,6 @@
     "cmake.configureOnOpen": false,
     "cmake.useCMakePresets": "always",
     "files.associations": {
-        "dreq.h": "c",
-        "uart.h": "c",
-        "clocks.h": "c",
-        "stdlib.h": "c",
-        "mcugpio.h": "c",
-        "mcuwait.h": "c",
-        "motor_ansteuerung.h": "c",
-        "mculib.h": "c",
-        "mcurb.h": "c",
-        "gpio.h": "c",
-        "timer.h": "c"
+        "stromsensor.h": "c"
     }
 }

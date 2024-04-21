@@ -13,6 +13,8 @@
 
 #include "McuRB.h"
 
+#define DEBUG (1)
+
 //Ringbuffer
 McuRB_Handle_t Ringbuffer = NULL;
 McuRB_Handle_t UartReceiveBuffer = NULL;
@@ -35,6 +37,12 @@ uint32_t SystemCoreClock = 120000000;
 
 
 int main(void) {
+
+     #if DEBUG
+          timer_hw->dbgpause = 0;
+     #endif
+     Ringbuffer = NULL;
+
     stdio_init_all();
     McuWait_Init();
 
@@ -45,14 +53,6 @@ int main(void) {
     uart_Communication_Init();
     //aktoren
     aktorenInit();
-    char Temp[] = {'P','o','s','1'};
-    for(int i = 0; i<4; i++){
-         McuRB_Put(Ringbuffer,&Temp[i]);
-    }
-    char Temp1[] = {'C','o','l','1'};
-    for(int i = 0; i<4; i++){
-         McuRB_Put(Ringbuffer,&Temp[i]);
-    }
 
     FreeRtosInit();
     vTaskStartScheduler();

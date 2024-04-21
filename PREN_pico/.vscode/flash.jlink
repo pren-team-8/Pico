@@ -1,0 +1,3 @@
+loadfile build/debug/AembsPico.hex
+r0
+q

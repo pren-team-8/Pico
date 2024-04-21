@@ -58,19 +58,6 @@ void Hub_Bewegung(bool dir, uint16_t steps){
     else {
         McuGPIO_SetLow(Hub_Dir_Pin);
     }
-    // steps
-    // while(true){
-    //     McuGPIO_SetHigh(Hub_Dir_Pin);
-    //     //McuWait_Waitms(2000);
-    //     //for(int i=0 ; i<steps ; i++){
-    //         McuGPIO_SetLow(Hub_Step_Pin);
-    //         McuWait_Waitus(500);
-    //         McuGPIO_SetHigh(Hub_Step_Pin);
-    //         McuWait_Waitus(500);
-    //     //}
-        //McuWait_Waitms(2000);
-        //McuGPIO_SetLow(Hub_Dir_Pin);  
-        //McuWait_Waitms(2000);  
     for(int i=0 ; i<steps ; i++){
         McuGPIO_SetLow(Hub_Step_Pin);
         McuWait_Waitus(500);

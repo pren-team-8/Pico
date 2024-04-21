@@ -1,4 +1,3 @@
-#include <cstdint>
 #ifndef STROMSENSOR__H_
 #define STROMSENSOR__H_
 
