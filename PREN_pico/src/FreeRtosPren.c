@@ -203,6 +203,6 @@ void InitTaskAnsteuerung(void){
 void FreeRtosInit(void){
     McuRTOS_Init();
     InitTaskAnsteuerung();
-    //InitTaskStrommessung();
+    InitTaskStrommessung();
 }
 

@@ -48,8 +48,8 @@ void aktorenInit(void){
     config_Endschalter1_Pin.isInput = true;
     config_Endschalter2_Pin.isInput = true;
         //Pull-Up aktivieren
-    config_Endschalter1_Pin.hw.pull = McuGPIO_PULL_UP;
-    config_Endschalter2_Pin.hw.pull = McuGPIO_PULL_UP;
+    config_Endschalter1_Pin.hw.pull = McuGPIO_PULL_DOWN;
+    config_Endschalter2_Pin.hw.pull = McuGPIO_PULL_DOWN;
         //init
     Endschalter1_Pin = McuGPIO_InitGPIO(&config_Endschalter1_Pin);
     Endschalter2_Pin = McuGPIO_InitGPIO(&config_Endschalter2_Pin);
@@ -73,7 +73,7 @@ void aktorenInit(void){
 //tested
 void pushHubmagnet(McuGPIO_Handle_t Hubmagnet){
     McuGPIO_SetHigh(Hubmagnet);
-    McuWait_Waitms(300);
+    McuWait_Waitms(150);
     McuGPIO_SetLow(Hubmagnet);
 }
 

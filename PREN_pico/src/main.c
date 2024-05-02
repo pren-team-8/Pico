@@ -38,10 +38,10 @@ uint32_t SystemCoreClock = 120000000;
 
 int main(void) {
 
-     #if DEBUG
-          timer_hw->dbgpause = 0;
-     #endif
-     Ringbuffer = NULL;
+     // #if DEBUG
+     //      timer_hw->dbgpause = 0;
+     // #endif
+     // Ringbuffer = NULL;
 
     stdio_init_all();
     McuWait_Init();
@@ -50,12 +50,40 @@ int main(void) {
     //Motor Init
     Motor_Ansteuerung_Init();
     //uart
-    uart_Communication_Init();
+//     uart_Communication_Init();
     //aktoren
     aktorenInit();
 
-    FreeRtosInit();
-    vTaskStartScheduler();
+//     FreeRtosInit();
+//     vTaskStartScheduler();
+
+    //  pushHubmagnet(Hubmagnet1_Pin);
+    //  McuWait_Waitms(500);
+    //  pushHubmagnet(Hubmagnet2_Pin);
+    //  McuWait_Waitms(500);
+    //  pushHubmagnet(Hubmagnet3_Pin);
+    //  McuWait_Waitms(500);
+    //  pushHubmagnet(Hubmagnet4_Pin);
+    //  McuWait_Waitms(500);
+
+    // bool direction = true;
+    //  Rev_Bewegung(true, 1280);          //Während ganzem Programm Enable auf LOW =>Haltemoment gewährleistet.
+    //  pushHubmagnet(Hubmagnet2_Pin);     //Anpassen damit Aktoren auf Enable PIN zugreifen können.
+    //  McuWait_Waitms(200);
+    //  Rev_Bewegung(true,1650);
+    //  pushHubmagnet(Hubmagnet3_Pin);
+    //  McuWait_Waitms(200);
+    //  Rev_Bewegung(false,1650);
+    //  pushHubmagnet(Hubmagnet2_Pin);
+    //  McuWait_Waitms(200);
+    //  Rev_Bewegung(true,1650);
+    //  pushHubmagnet(Hubmagnet3_Pin);
+    //  McuWait_Waitms(200);
+    //  Hub_Bewegung(false,1000);
+    //  Hub_Bewegung(true,6000);
+    while(true){
+    Rev_Bewegung(true,1000);
+    }
 
     for(;;) {}
     return 0;
