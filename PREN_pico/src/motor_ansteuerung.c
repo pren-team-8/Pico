@@ -63,7 +63,9 @@ void Motoren_Init(void){
  }
 
 void Hub_Bewegung(bool dir, uint16_t steps){
-    //Bewegung ermöglichen
+ //Bewegung ermöglichen
+    uint16_t maxpause = 1200;
+    uint16_t minpause = 900;
     McuGPIO_SetLow(Hub_EN_Pin);
     // direction
     if(dir){
@@ -72,29 +74,53 @@ void Hub_Bewegung(bool dir, uint16_t steps){
     else {
         McuGPIO_SetLow(Hub_Dir_Pin);
     }
-    // steps
-    // while(true){
-    //     McuGPIO_SetHigh(Hub_Dir_Pin);
-    //     //McuWait_Waitms(2000);
-    //     //for(int i=0 ; i<steps ; i++){
-    //         McuGPIO_SetLow(Hub_Step_Pin);
-    //         McuWait_Waitus(500);
-    //         McuGPIO_SetHigh(Hub_Step_Pin);
-    //         McuWait_Waitus(500);
-    //     //}
-        //McuWait_Waitms(2000);
-        //McuGPIO_SetLow(Hub_Dir_Pin);  
-        //McuWait_Waitms(2000);  
-    for(int i=0 ; i<steps ; i++){
-        McuGPIO_SetLow(Hub_Step_Pin);
-        McuWait_Waitus(400); //750          //400 MINIMAL Pause bei Half Step => Max.Geschwindigkeit
-        McuGPIO_SetHigh(Hub_Step_Pin);
-        McuWait_Waitus(400);
+    uint16_t pause = (maxpause-minpause)/100;
+    int Verzögerung = 0;
+
+    if(steps<200){ //Schrittmotor kann nicht richtig beschleunigen da zu wenig steps
+        for(int i = 0; i<(steps/2);i++){ //Beschleunigung
+            McuGPIO_SetLow(Hub_Step_Pin);
+            McuWait_Waitus(maxpause-(pause*Verzögerung)); //750          //400 MINIMAL Pause bei Half Step => Max.Geschwindigkeit
+            McuGPIO_SetHigh(Hub_Step_Pin);
+            McuWait_Waitus(maxpause-(pause*Verzögerung));
+            Verzögerung++;
+        }
+        for(int i = 0; i<steps;i++){ //Bremsvorgang
+            McuGPIO_SetLow(Hub_Step_Pin);
+            McuWait_Waitus(maxpause-(pause*Verzögerung)); //750          //400 MINIMAL Pause bei Half Step => Max.Geschwindigkeit
+            McuGPIO_SetHigh(Hub_Step_Pin);
+            McuWait_Waitus(maxpause-(pause*Verzögerung));
+            Verzögerung--;
+        }
+    } else if(steps>200) { // genügend steps für fullspeed
+        for(int i=0 ; i<steps ; i++){
+            if(i<100){ // Beschleunigung
+                McuGPIO_SetLow(Hub_Step_Pin);
+                McuWait_Waitus(maxpause-(pause*Verzögerung)); //750          //400 MINIMAL Pause bei Half Step => Max.Geschwindigkeit
+                McuGPIO_SetHigh(Hub_Step_Pin);
+                McuWait_Waitus(maxpause-(pause*Verzögerung));
+                Verzögerung++;
+            } else if(i>(steps-100)) { // Bremsvorgang
+                McuGPIO_SetLow(Hub_Step_Pin);
+                McuWait_Waitus(maxpause-(pause*Verzögerung)); //750          //400 MINIMAL Pause bei Half Step => Max.Geschwindigkeit
+                McuGPIO_SetHigh(Hub_Step_Pin);
+                McuWait_Waitus(maxpause-(pause*Verzögerung));
+                Verzögerung--;
+            } else { // Fullspeed
+                McuGPIO_SetLow(Hub_Step_Pin);
+                McuWait_Waitus(minpause); //750          //400 MINIMAL Pause bei Half Step => Max.Geschwindigkeit
+                McuGPIO_SetHigh(Hub_Step_Pin);
+                McuWait_Waitus(minpause);
+            }
+        }
     }
     McuGPIO_SetHigh(Hub_EN_Pin);
 }
 
 void Rev_Bewegung(bool dir, uint16_t steps){
+     //Bewegung ermöglichen
+    uint16_t maxpause = 3000;
+    uint16_t minpause = 2200;
     McuGPIO_SetLow(Rev_EN_Pin);
     // direction
     if(dir){
@@ -103,12 +129,46 @@ void Rev_Bewegung(bool dir, uint16_t steps){
     else {
         McuGPIO_SetLow(Rev_Dir_Pin);
     }
-    // steps
-    for(int i=0 ; i<steps ; i++){
-        McuGPIO_SetLow(Rev_Step_Pin);
-        McuWait_Waitus(400);
-        McuGPIO_SetHigh(Rev_Step_Pin);
-        McuWait_Waitus(400);
+    uint16_t pause = (maxpause-minpause)/100;
+    int Verzögerung = 0;
+
+    if(steps<200){ //Schrittmotor kann nicht richtig beschleunigen da zu wenig steps
+        for(int i = 0; i<(steps/2);i++){ //Beschleunigung
+            McuGPIO_SetLow(Rev_Step_Pin);
+            McuWait_Waitus(maxpause-(pause*Verzögerung)); //750          //400 MINIMAL Pause bei Half Step => Max.Geschwindigkeit
+            McuGPIO_SetHigh(Rev_Step_Pin);
+            McuWait_Waitus(maxpause-(pause*Verzögerung));
+            Verzögerung++;
+        }
+        for(int i = 0; i<steps;i++){ //Bremsvorgang
+            McuGPIO_SetLow(Rev_Step_Pin);
+            McuWait_Waitus(maxpause-(pause*Verzögerung)); //750          //400 MINIMAL Pause bei Half Step => Max.Geschwindigkeit
+            McuGPIO_SetHigh(Rev_Step_Pin);
+            McuWait_Waitus(maxpause-(pause*Verzögerung));
+            Verzögerung--;
+        }
+    } else if(steps>200) { // genügend steps für fullspeed
+        for(int i=0 ; i<steps ; i++){
+            if(i<100){ // Beschleunigung
+                McuGPIO_SetLow(Rev_Step_Pin);
+                McuWait_Waitus(maxpause-(pause*Verzögerung)); //750          //400 MINIMAL Pause bei Half Step => Max.Geschwindigkeit
+                McuGPIO_SetHigh(Rev_Step_Pin);
+                McuWait_Waitus(maxpause-(pause*Verzögerung));
+                Verzögerung++;
+            } else if(i>(steps-100)) { // Bremsvorgang
+                McuGPIO_SetLow(Rev_Step_Pin);
+                McuWait_Waitus(maxpause-(pause*Verzögerung)); //750          //400 MINIMAL Pause bei Half Step => Max.Geschwindigkeit
+                McuGPIO_SetHigh(Rev_Step_Pin);
+                McuWait_Waitus(maxpause-(pause*Verzögerung));
+                Verzögerung--;
+            } else { // Fullspeed
+                McuGPIO_SetLow(Rev_Step_Pin);
+                McuWait_Waitus(minpause); //750          //400 MINIMAL Pause bei Half Step => Max.Geschwindigkeit
+                McuGPIO_SetHigh(Rev_Step_Pin);
+                McuWait_Waitus(minpause);
+            }
+
+        }
     }
-    // McuGPIO_SetHigh(Rev_EN_Pin);
+    McuGPIO_SetHigh(Rev_EN_Pin);
 }

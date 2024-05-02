@@ -81,8 +81,11 @@ int main(void) {
     //  McuWait_Waitms(200);
     //  Hub_Bewegung(false,1000);
     //  Hub_Bewegung(true,6000);
+    bool direction = true;
     while(true){
-    Rev_Bewegung(true,1000);
+    Hub_Bewegung(direction,2000);
+    Rev_Bewegung(direction,800);
+    direction = !direction;
     }
 
     for(;;) {}
