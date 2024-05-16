@@ -73,7 +73,7 @@ void aktorenInit(void){
 //tested
 void pushHubmagnet(McuGPIO_Handle_t Hubmagnet){
     McuGPIO_SetHigh(Hubmagnet);
-    McuWait_Waitms(150);
+    McuWait_Waitms(500);
     McuGPIO_SetLow(Hubmagnet);
 }
 

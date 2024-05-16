@@ -15,20 +15,24 @@ void StromSensorInit(void){
 
 
 //not tested
-uint16_t read_Sensor_12V(void){
+float read_Sensor_12V(void){
     adc_select_input(0);
-    const float conversion_factor = 3.3f / (1 << 12);
-    uint16_t result = adc_read();
+    const float conversion_factor = (3.3/4096);
+    float result = adc_read();
     result = result * conversion_factor;
+    result = result -2.5;
+    result = result *1.3;
     return result;
 }
 
 
 //not tested
-uint16_t read_Sensor_5V(void){
+float read_Sensor_5V(void){
     adc_select_input(1);
-    const float conversion_factor = 3.3f / (1 << 12);
-    uint16_t result = adc_read();
+    const float conversion_factor = (3.3/4096);
+    float result = adc_read();
     result = result * conversion_factor;
+    result = result -2.5;
+    result = result *1.3;
     return result;
 }

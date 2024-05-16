@@ -2,6 +2,7 @@
 #include "McuGPIO.h"
 #include "McuWait.h"
 #include "motor_ansteuerung.h"
+#include "aktoren.h"
 
 // Hubeinheit
 static McuGPIO_Handle_t Hub_Dir_Pin;
@@ -10,7 +11,10 @@ static McuGPIO_Handle_t Hub_EN_Pin;
 // Revolver
 static McuGPIO_Handle_t Rev_Dir_Pin;
 static McuGPIO_Handle_t Rev_Step_Pin;
-static McuGPIO_Handle_t Rev_EN_Pin;
+extern McuGPIO_Handle_t Rev_EN_Pin;
+// Hubmagnete
+extern McuGPIO_Handle_t Endschalter1_Pin;
+extern McuGPIO_Handle_t Endschalter2_Pin;
 
 
 void Motor_Ansteuerung_Init(void){
@@ -66,6 +70,8 @@ void Hub_Bewegung(bool dir, uint16_t steps){
  //Bewegung ermöglichen
     uint16_t maxpause = 1200;
     uint16_t minpause = 900;
+    uint16_t pause = (maxpause-minpause)/100;
+    int Verzögerung = 0;
     McuGPIO_SetLow(Hub_EN_Pin);
     // direction
     if(dir){
@@ -74,10 +80,9 @@ void Hub_Bewegung(bool dir, uint16_t steps){
     else {
         McuGPIO_SetLow(Hub_Dir_Pin);
     }
-    uint16_t pause = (maxpause-minpause)/100;
-    int Verzögerung = 0;
+    
 
-    if(steps<200){ //Schrittmotor kann nicht richtig beschleunigen da zu wenig steps
+    if(steps<=200){ //Schrittmotor kann nicht richtig beschleunigen da zu wenig steps
         for(int i = 0; i<(steps/2);i++){ //Beschleunigung
             McuGPIO_SetLow(Hub_Step_Pin);
             McuWait_Waitus(maxpause-(pause*Verzögerung)); //750          //400 MINIMAL Pause bei Half Step => Max.Geschwindigkeit
@@ -129,10 +134,10 @@ void Rev_Bewegung(bool dir, uint16_t steps){
     else {
         McuGPIO_SetLow(Rev_Dir_Pin);
     }
-    uint16_t pause = (maxpause-minpause)/100;
+    uint16_t pause = (maxpause-minpause)/150;
     int Verzögerung = 0;
 
-    if(steps<200){ //Schrittmotor kann nicht richtig beschleunigen da zu wenig steps
+    if(steps<=300){ //Schrittmotor kann nicht richtig beschleunigen da zu wenig steps
         for(int i = 0; i<(steps/2);i++){ //Beschleunigung
             McuGPIO_SetLow(Rev_Step_Pin);
             McuWait_Waitus(maxpause-(pause*Verzögerung)); //750          //400 MINIMAL Pause bei Half Step => Max.Geschwindigkeit
@@ -147,15 +152,15 @@ void Rev_Bewegung(bool dir, uint16_t steps){
             McuWait_Waitus(maxpause-(pause*Verzögerung));
             Verzögerung--;
         }
-    } else if(steps>200) { // genügend steps für fullspeed
+    } else if(steps>300) { // genügend steps für fullspeed
         for(int i=0 ; i<steps ; i++){
-            if(i<100){ // Beschleunigung
+            if(i<150){ // Beschleunigung
                 McuGPIO_SetLow(Rev_Step_Pin);
                 McuWait_Waitus(maxpause-(pause*Verzögerung)); //750          //400 MINIMAL Pause bei Half Step => Max.Geschwindigkeit
                 McuGPIO_SetHigh(Rev_Step_Pin);
                 McuWait_Waitus(maxpause-(pause*Verzögerung));
                 Verzögerung++;
-            } else if(i>(steps-100)) { // Bremsvorgang
+            } else if(i>(steps-150)) { // Bremsvorgang
                 McuGPIO_SetLow(Rev_Step_Pin);
                 McuWait_Waitus(maxpause-(pause*Verzögerung)); //750          //400 MINIMAL Pause bei Half Step => Max.Geschwindigkeit
                 McuGPIO_SetHigh(Rev_Step_Pin);
@@ -170,5 +175,81 @@ void Rev_Bewegung(bool dir, uint16_t steps){
 
         }
     }
+//     McuGPIO_SetHigh(Rev_EN_Pin);
+}
+
+void Rev_Init(void){
+
+    uint16_t minpause = 2200;
+    McuGPIO_SetLow(Rev_EN_Pin);
+    McuGPIO_SetHigh(Rev_Dir_Pin);
+    
+    while(Endschalter(Endschalter1_Pin) == false){
+        McuGPIO_SetLow(Rev_Step_Pin);
+        McuWait_Waitus(minpause); //750          //400 MINIMAL Pause bei Half Step => Max.Geschwindigkeit
+        McuGPIO_SetHigh(Rev_Step_Pin);
+        McuWait_Waitus(minpause);
+    }
+    minpause = 9000;
+    for(int i = 0; i<20; i++){
+        McuGPIO_SetLow(Rev_Step_Pin);
+        McuWait_Waitus(minpause); //750          //400 MINIMAL Pause bei Half Step => Max.Geschwindigkeit
+        McuGPIO_SetHigh(Rev_Step_Pin);
+        McuWait_Waitus(minpause);
+    }
+    McuGPIO_SetLow(Rev_Dir_Pin);
+   while(Endschalter(Endschalter1_Pin) == false){
+        McuGPIO_SetLow(Rev_Step_Pin);
+        McuWait_Waitus(minpause); //750          //400 MINIMAL Pause bei Half Step => Max.Geschwindigkeit
+        McuGPIO_SetHigh(Rev_Step_Pin);
+        McuWait_Waitus(minpause);
+    }
+    while(Endschalter(Endschalter1_Pin) == true){
+        McuGPIO_SetLow(Rev_Step_Pin);
+        McuWait_Waitus(minpause); //750          //400 MINIMAL Pause bei Half Step => Max.Geschwindigkeit
+        McuGPIO_SetHigh(Rev_Step_Pin);
+        McuWait_Waitus(minpause);
+    }
+    for(int i = 0; i<10; i++){
+        McuGPIO_SetLow(Rev_Step_Pin);
+        McuWait_Waitus(minpause); //750          //400 MINIMAL Pause bei Half Step => Max.Geschwindigkeit
+        McuGPIO_SetHigh(Rev_Step_Pin);
+        McuWait_Waitus(minpause);
+    }
+    Rev_Bewegung(true, 26);
+}
+
+void Hub_Init(void){
+
+    uint16_t maxpause = 1200;
+    McuGPIO_SetLow(Hub_EN_Pin);
+    // direction
+    McuGPIO_SetHigh(Hub_Dir_Pin);
+    
+     while(Endschalter(Endschalter2_Pin) == false){
+        McuGPIO_SetLow(Hub_Step_Pin);
+        McuWait_Waitus(maxpause); //750          //400 MINIMAL Pause bei Half Step => Max.Geschwindigkeit
+        McuGPIO_SetHigh(Hub_Step_Pin);
+        McuWait_Waitus(maxpause);
+    }
+    McuWait_Waitms(100);
+    Hub_Bewegung(false, 2480);
+   
+}
+
+void Hub_Ende(void){
+    Hub_Bewegung(true, 2400);
+
+    McuGPIO_SetLow(Hub_EN_Pin);
+    // direction
+    McuGPIO_SetHigh(Hub_Dir_Pin);
+    uint16_t maxpause = 1200;
+    while(Endschalter(Endschalter2_Pin) == false){
+        McuGPIO_SetLow(Hub_Step_Pin);
+        McuWait_Waitus(maxpause); //750          //400 MINIMAL Pause bei Half Step => Max.Geschwindigkeit
+        McuGPIO_SetHigh(Hub_Step_Pin);
+        McuWait_Waitus(maxpause);
+    }
+    McuGPIO_SetHigh(Hub_EN_Pin);
     McuGPIO_SetHigh(Rev_EN_Pin);
 }

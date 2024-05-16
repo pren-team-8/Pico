@@ -6,5 +6,8 @@
 // initialisiert alles für das Betriebssystem FreeRtos
 void FreeRtosInit(void);
 
+void RevolverLogik(char pos,char col);
+void CommandEnd(void);
+
 
 #endif

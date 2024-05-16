@@ -10,10 +10,11 @@
 #include "motor_ansteuerung.h"
 #include "FreeRtosPren.h"
 #include "aktoren.h"
+#include "StromSensor.h"
 
 #include "McuRB.h"
 
-#define DEBUG (1)
+#define DEBUG (0)
 
 //Ringbuffer
 McuRB_Handle_t Ringbuffer = NULL;
@@ -35,13 +36,15 @@ McuGPIO_Handle_t Lautsprecher_Pin;
 //MCUwait
 uint32_t SystemCoreClock = 120000000;
 
+McuGPIO_Handle_t Rev_EN_Pin;
+
 
 int main(void) {
 
-     // #if DEBUG
-     //      timer_hw->dbgpause = 0;
-     // #endif
-     // Ringbuffer = NULL;
+     #if DEBUG
+          timer_hw->dbgpause = 0;
+     #endif
+     Ringbuffer = NULL;
 
     stdio_init_all();
     McuWait_Init();
@@ -50,44 +53,46 @@ int main(void) {
     //Motor Init
     Motor_Ansteuerung_Init();
     //uart
-//     uart_Communication_Init();
+    uart_Communication_Init();
     //aktoren
     aktorenInit();
 
-//     FreeRtosInit();
-//     vTaskStartScheduler();
+    FreeRtosInit();
+   
+    //StromSensorInit();
+    // float strom5V = read_Sensor_5V();
+    // uint16_t strom12V = read_Sensor_12V();
+    Hub_Init();
+    Rev_Init();
 
-    //  pushHubmagnet(Hubmagnet1_Pin);
-    //  McuWait_Waitms(500);
-    //  pushHubmagnet(Hubmagnet2_Pin);
-    //  McuWait_Waitms(500);
-    //  pushHubmagnet(Hubmagnet3_Pin);
-    //  McuWait_Waitms(500);
-    //  pushHubmagnet(Hubmagnet4_Pin);
-    //  McuWait_Waitms(500);
+    // RevolverLogik('1','1');
+    // RevolverLogik('2','2');
+    // RevolverLogik('3','1');
+    // RevolverLogik('4','3');
+    // RevolverLogik('1','3');
+    // RevolverLogik('4','1');
 
-    // bool direction = true;
-    //  Rev_Bewegung(true, 1280);          //Während ganzem Programm Enable auf LOW =>Haltemoment gewährleistet.
-    //  pushHubmagnet(Hubmagnet2_Pin);     //Anpassen damit Aktoren auf Enable PIN zugreifen können.
-    //  McuWait_Waitms(200);
-    //  Rev_Bewegung(true,1650);
-    //  pushHubmagnet(Hubmagnet3_Pin);
-    //  McuWait_Waitms(200);
-    //  Rev_Bewegung(false,1650);
-    //  pushHubmagnet(Hubmagnet2_Pin);
-    //  McuWait_Waitms(200);
-    //  Rev_Bewegung(true,1650);
-    //  pushHubmagnet(Hubmagnet3_Pin);
-    //  McuWait_Waitms(200);
-    //  Hub_Bewegung(false,1000);
-    //  Hub_Bewegung(true,6000);
-    bool direction = true;
-    while(true){
-    Hub_Bewegung(direction,2000);
-    Rev_Bewegung(direction,800);
-    direction = !direction;
-    }
+    // CommandEnd();
+    // McuWait_Waitms(250);
+    // pushHubmagnet(Hubmagnet1_Pin);
+    // McuWait_Waitms(100);
+    // Rev_Bewegung(true, 67);
+    // McuWait_Waitms(250);
+    // pushHubmagnet(Hubmagnet4_Pin);
+    // McuWait_Waitms(100);
+    // Rev_Bewegung(true, 67);
+    // McuWait_Waitms(250);
+    // pushHubmagnet(Hubmagnet3_Pin);
+    // McuWait_Waitms(100);
+    // Rev_Bewegung(true, 67);
+    // McuWait_Waitms(250);
+    // pushHubmagnet(Hubmagnet2_Pin);
 
+
+  
+
+
+vTaskStartScheduler();
     for(;;) {}
     return 0;
 }

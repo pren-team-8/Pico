@@ -11,7 +11,7 @@
 #include "aktoren.h"
 
 //Steps für 90 GRad
-#define STEPS_FOR_NINETEEN_DEGRES (90)
+#define STEPS_FOR_NINETEEN_DEGRES (67)
 
 //Ringbuffer
 extern McuRB_Handle_t Ringbuffer;
@@ -41,13 +41,13 @@ char ElementRingBuffer;
 
 //Positionspeicherung an welcher die Würfel liegen
 char Pos;
-char Col;       //1 = Rot, 2 = Blau, 3 = Gelb
+char Col;       //1 = Blau, 2 = Gelb, 3 = Rot
 
 //Char-Array für die Positionen des Revolvers
-char RevolverPos1[4] = {'1', '2', '3', '0'};
-char RevolverPos2[4] = {'0', '1', '2', '3'};
-char RevolverPos3[4] = {'3', '0', '1', '2'};
-char RevolverPos4[4] = {'2', '3', '0', '1'};
+char RevolverPos1[4] = {'1', '2', '0', '3'};
+char RevolverPos2[4] = {'2', '0', '3', '1'};
+char RevolverPos3[4] = {'0', '3', '1', '2'};
+char RevolverPos4[4] = {'3', '1', '2', '0'};
 
 //Positionsortung des Revolvers
 bool direction = 0;      // 1 = Uhrzeigersinn, 0 = gegenUhrzeigersinn
@@ -78,7 +78,11 @@ void RevolverLogik(char pos,char col){ // Hier sollte die Logik entstehen, wie m
     } else if (RevolverCurrentPos < RevolverPos){
         direction = 1;
         steps = RevolverPos - RevolverCurrentPos;
-    } else {
+    } 
+    else if(RevolverCurrentPos == RevolverPos){
+        steps = 0;
+    }
+        else {
         //ERROR
     }
     //Steps
@@ -90,18 +94,26 @@ void RevolverLogik(char pos,char col){ // Hier sollte die Logik entstehen, wie m
     //Welches Hubmagnet muss auslösen
     //Datentyp casten
     int pos_int = pos -'0';
-    switch(pos) {
+    switch(pos_int) {
         case 1:
+            McuWait_Waitms(250);
             pushHubmagnet(Hubmagnet1_Pin);
+            McuWait_Waitms(250);
             break;
         case 2:
+            McuWait_Waitms(250);
             pushHubmagnet(Hubmagnet2_Pin);
+            McuWait_Waitms(250);
             break;
         case 3:
+            McuWait_Waitms(250);
             pushHubmagnet(Hubmagnet3_Pin);
+            McuWait_Waitms(250);
             break;
         case 4:
+            McuWait_Waitms(250);
             pushHubmagnet(Hubmagnet4_Pin);
+            McuWait_Waitms(250);
             break;
         default:
             //Fehlerbehandlung
@@ -110,7 +122,8 @@ void RevolverLogik(char pos,char col){ // Hier sollte die Logik entstehen, wie m
 }
 
 void CommandEnd(void){  // Alles für den Befehl End. Herunterfahren und zusammenstossen. Hochfahren. Sobald nach oben gefahren, Buzzer auslösen.
-
+    Hub_Bewegung(false, 450);
+    Hub_Ende();
 }
 
 void CommandPos(void){  // Alles für den Befehl Pos. Color muss noch ausgewertet werden
@@ -130,8 +143,8 @@ static void Strommessung(void *pv) {
         char Wert12V[10]; // String zum Speichern des Werts
 
         // Den Wert in einen String konvertieren ---- Funktionien funktionieren noch nicht, da AD-Wandler sich aufhängt, evt will nichts angeschlossen ist
-        //sprintf(Wert5V, "%d", read_Sensor_5V());
-        //sprintf(Wert12V, "%d", read_Sensor_12V());
+        // sprintf(Wert5V, "%d", read_Sensor_5V());
+        // sprintf(Wert12V, "%d", read_Sensor_12V());
 
         // Den Wert schicken
         uart_send(Wert5V);
@@ -143,7 +156,7 @@ static void Strommessung(void *pv) {
 
 static void Ansteuerung(void *pv) {
     for(;;){
-        vTaskDelay(pdMS_TO_TICKS(5000));
+        vTaskDelay(pdMS_TO_TICKS(10000));
         McuRB_Get(Ringbuffer,&ElementRingBuffer);
         if(ElementRingBuffer == '\000'){ //Befehl noch nicht angekommen oder keiner vorhanden
             
@@ -167,8 +180,11 @@ static void Ansteuerung(void *pv) {
                         CommandEnd();
                     }
                 }
+            // } else {
+            //     while(McuRB_Peek())
             }
         }
+        uart_send("OK");
     }
 }
 
@@ -203,6 +219,6 @@ void InitTaskAnsteuerung(void){
 void FreeRtosInit(void){
     McuRTOS_Init();
     InitTaskAnsteuerung();
-    InitTaskStrommessung();
+    //InitTaskStrommessung();
 }
 

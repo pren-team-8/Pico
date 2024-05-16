@@ -10,5 +10,8 @@ void Motoren_Init(void);
 // Bewegungen
 void Hub_Bewegung(bool dir,uint16_t steps);
 void Rev_Bewegung(bool dir,uint16_t steps);
+void Rev_Init(void);
+void Hub_Init(void);
+void Hub_Ende(void);
 
 #endif
