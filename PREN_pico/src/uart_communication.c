@@ -40,11 +40,6 @@ void on_uart_rx_uart0(void) {
     }
 }
 
-
-void uart_communication_uart_test(void){
-    uart_puts(UART_ID_UART0, "Hallo");
-}
-
 void uart_Communication_Init(void) {
 
     //Init Ringbuffer

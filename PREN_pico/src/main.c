@@ -59,12 +59,11 @@ int main(void) {
 
     FreeRtosInit();
    
-    //StromSensorInit();
-    // float strom5V = read_Sensor_5V();
-    // uint16_t strom12V = read_Sensor_12V();
+    StromSensorInit();
+
     Hub_Init();
     Rev_Init();
-
+    
     // RevolverLogik('1','1');
     // RevolverLogik('2','2');
     // RevolverLogik('3','1');
@@ -73,26 +72,13 @@ int main(void) {
     // RevolverLogik('4','1');
 
     // CommandEnd();
-    // McuWait_Waitms(250);
-    // pushHubmagnet(Hubmagnet1_Pin);
-    // McuWait_Waitms(100);
-    // Rev_Bewegung(true, 67);
-    // McuWait_Waitms(250);
-    // pushHubmagnet(Hubmagnet4_Pin);
-    // McuWait_Waitms(100);
-    // Rev_Bewegung(true, 67);
-    // McuWait_Waitms(250);
-    // pushHubmagnet(Hubmagnet3_Pin);
-    // McuWait_Waitms(100);
-    // Rev_Bewegung(true, 67);
-    // McuWait_Waitms(250);
-    // pushHubmagnet(Hubmagnet2_Pin);
+
 
 
   
 
 
-vTaskStartScheduler();
+    vTaskStartScheduler();
     for(;;) {}
     return 0;
 }

@@ -124,6 +124,7 @@ void RevolverLogik(char pos,char col){ // Hier sollte die Logik entstehen, wie m
 void CommandEnd(void){  // Alles für den Befehl End. Herunterfahren und zusammenstossen. Hochfahren. Sobald nach oben gefahren, Buzzer auslösen.
     Hub_Bewegung(false, 450);
     Hub_Ende();
+    Lautsprecher(Lautsprecher_Pin);
 }
 
 void CommandPos(void){  // Alles für den Befehl Pos. Color muss noch ausgewertet werden
@@ -139,17 +140,21 @@ static void Strommessung(void *pv) {
     for(;;){
         vTaskDelay(pdMS_TO_TICKS(10000));
         //TODO Strommessung
-        char Wert5V[10]; // String zum Speichern des Werts
-        char Wert12V[10]; // String zum Speichern des Werts
+        //static char Wert5V[4] = ""; // String zum Speichern des Werts
+        //static char Wert12V[4] = ""; // String zum Speichern des Werts
+            
+        // Umwandlung in String und Auslesung des Sensors
+        static char result_str_5V[4] = "";
+        sprintf(result_str_5V, "%d", read_Sensor_5V());
 
-        // Den Wert in einen String konvertieren ---- Funktionien funktionieren noch nicht, da AD-Wandler sich aufhängt, evt will nichts angeschlossen ist
-        // sprintf(Wert5V, "%d", read_Sensor_5V());
-        // sprintf(Wert12V, "%d", read_Sensor_12V());
+        // Umwandlung in String und Auslesung des Sensors
+        static char result_str_12V[4] = "";
+        sprintf(result_str_12V, "%d", read_Sensor_12V());
 
         // Den Wert schicken
-        uart_send(Wert5V);
+        uart_send(result_str_5V);
         uart_send("\n\r");
-        uart_send(Wert12V);
+        uart_send(result_str_12V);
         uart_send("\n\r");
     }
 }
@@ -219,6 +224,6 @@ void InitTaskAnsteuerung(void){
 void FreeRtosInit(void){
     McuRTOS_Init();
     InitTaskAnsteuerung();
-    //InitTaskStrommessung();
+    InitTaskStrommessung();
 }
 

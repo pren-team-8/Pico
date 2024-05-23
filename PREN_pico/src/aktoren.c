@@ -41,7 +41,7 @@ void aktorenInit(void){
     config_Hubmagnet4_Pin.hw.pin = 5;
     config_Endschalter1_Pin.hw.pin = 6;
     config_Endschalter2_Pin.hw.pin = 7;
-    config_Lautsprecher_Pin.hw.pin = 15;
+    config_Lautsprecher_Pin.hw.pin = 21;
 
     //Inputs
         //konfiguriert die Pins als input
