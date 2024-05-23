@@ -138,7 +138,7 @@ void CommandPos(void){  // Alles für den Befehl Pos. Color muss noch ausgewerte
 
 static void Strommessung(void *pv) {
     for(;;){
-        vTaskDelay(pdMS_TO_TICKS(10000));
+        vTaskDelay(pdMS_TO_TICKS(500));
         //TODO Strommessung
         //static char Wert5V[4] = ""; // String zum Speichern des Werts
         //static char Wert12V[4] = ""; // String zum Speichern des Werts
@@ -161,7 +161,7 @@ static void Strommessung(void *pv) {
 
 static void Ansteuerung(void *pv) {
     for(;;){
-        vTaskDelay(pdMS_TO_TICKS(10000));
+        vTaskDelay(pdMS_TO_TICKS(200));
         McuRB_Get(Ringbuffer,&ElementRingBuffer);
         if(ElementRingBuffer == '\000'){ //Befehl noch nicht angekommen oder keiner vorhanden
             
@@ -189,7 +189,7 @@ static void Ansteuerung(void *pv) {
             //     while(McuRB_Peek())
             }
         }
-        uart_send("OK");
+        //uart_send("OK");
     }
 }
 

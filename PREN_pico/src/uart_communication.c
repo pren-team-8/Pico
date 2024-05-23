@@ -7,7 +7,7 @@
 
 #define UART_ID_UART0 uart0
 #define UART_ID_UART1 uart1
-#define BAUD_RATE 115200
+#define BAUD_RATE 9600
 #define DATA_BITS 8
 #define STOP_BITS 1
 #define PARITY    UART_PARITY_NONE
@@ -24,7 +24,7 @@
 extern McuRB_Handle_t Ringbuffer;
 McuRB_Config_t Ringbuffer_config;
 
-char uartxBuffer[100];
+char uartxBuffer[200];
 uint8_t indexxBuffer = 0;
 
 void uart_send(char tosend[]){
@@ -44,9 +44,8 @@ void uart_Communication_Init(void) {
 
     //Init Ringbuffer
     McuRB_Init();
-    McuRB_GetDefaultconfig(&Ringbuffer_config);
-    Ringbuffer = McuRB_InitRB(&Ringbuffer_config);
-
+    Ringbuffer_config.elementSize = sizeof(char);
+    Ringbuffer_config.nofElements = 400;
     McuRB_GetDefaultconfig(&Ringbuffer_config);
     Ringbuffer = McuRB_InitRB(&Ringbuffer_config);
 
