@@ -238,12 +238,21 @@ void Hub_Init(void){
 }
 
 void Hub_Ende(void){
-    Hub_Bewegung(true, 2400);
 
     McuGPIO_SetLow(Hub_EN_Pin);
+    McuGPIO_SetLow(Hub_Dir_Pin);
+    uint16_t maxpause = 1200;
+    //Herunterfahren und Würfel zusammenstossen
+    for(int i = 0; i<500; i++){
+        McuGPIO_SetLow(Hub_Step_Pin);
+        McuWait_Waitus(maxpause); //750          //400 MINIMAL Pause bei Half Step => Max.Geschwindigkeit
+        McuGPIO_SetHigh(Hub_Step_Pin);
+        McuWait_Waitus(maxpause);
+    }
+    McuWait_Waitms(100);
     // direction
     McuGPIO_SetHigh(Hub_Dir_Pin);
-    uint16_t maxpause = 1200;
+    //nach oben fahren
     while(Endschalter(Endschalter2_Pin) == false){
         McuGPIO_SetLow(Hub_Step_Pin);
         McuWait_Waitus(maxpause); //750          //400 MINIMAL Pause bei Half Step => Max.Geschwindigkeit

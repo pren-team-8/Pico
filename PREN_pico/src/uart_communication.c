@@ -24,19 +24,15 @@
 extern McuRB_Handle_t Ringbuffer;
 McuRB_Config_t Ringbuffer_config;
 
-char uartxBuffer[200];
-uint8_t indexxBuffer = 0;
-
 void uart_send(char tosend[]){
     uart_puts(UART_ID_UART0,tosend);
 }
-
 //ISR Callback Function for UART0 RX Interrupt
 void on_uart_rx_uart0(void) {
     while (uart_is_readable(UART_ID_UART0)) { // uart_is_readable -> Determine whether data is waiting in the RX FIFO.
         char temp = uart_getc(UART_ID_UART0);
         McuRB_Put(Ringbuffer,&temp);
-        uart_putc(UART_ID_UART0, temp);
+        //uart_putc(UART_ID_UART0, temp);
     }
 }
 

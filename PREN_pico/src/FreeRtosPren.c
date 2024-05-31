@@ -122,7 +122,7 @@ void RevolverLogik(char pos,char col){ // Hier sollte die Logik entstehen, wie m
 }
 
 void CommandEnd(void){  // Alles für den Befehl End. Herunterfahren und zusammenstossen. Hochfahren. Sobald nach oben gefahren, Buzzer auslösen.
-    Hub_Bewegung(false, 450);
+    //Hub_Bewegung(false, 450);
     Hub_Ende();
     Lautsprecher(Lautsprecher_Pin);
 }
@@ -218,8 +218,6 @@ void InitTaskAnsteuerung(void){
         for(;;){} 
     }
 }
-
-
 
 void FreeRtosInit(void){
     McuRTOS_Init();

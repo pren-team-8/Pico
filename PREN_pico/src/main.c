@@ -46,39 +46,27 @@ int main(void) {
      #endif
      Ringbuffer = NULL;
 
-    stdio_init_all();
-    McuWait_Init();
+     stdio_init_all();
+     McuWait_Init();
 
-    /*INIT*/
-    //Motor Init
-    Motor_Ansteuerung_Init();
-    //uart
-    uart_Communication_Init();
-    //aktoren
-    aktorenInit();
+     /*INIT*/
+     //Motor Init
+     Motor_Ansteuerung_Init();
+     //uart
+     uart_Communication_Init();
+     //aktoren
+     aktorenInit();
+     //Betriebssystem
+     FreeRtosInit();
+     //Stromsensor
+     StromSensorInit();
 
-    FreeRtosInit();
-   
-    StromSensorInit();
+     //Referenzierung
+     Hub_Init();
+     Rev_Init();
 
-    Hub_Init();
-    Rev_Init();
-    
-    // RevolverLogik('1','1');
-    // RevolverLogik('2','2');
-    // RevolverLogik('3','1');
-    // RevolverLogik('4','3');
-    // RevolverLogik('1','3');
-    // RevolverLogik('4','1');
-
-    // CommandEnd();
-
-
-
-  
-
-
-    vTaskStartScheduler();
-    for(;;) {}
-    return 0;
+     //Start Betriebssystem
+     vTaskStartScheduler();
+     for(;;) {}
+     return 0;
 }
