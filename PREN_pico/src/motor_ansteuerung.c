@@ -249,7 +249,7 @@ void Hub_Ende(void){
         McuGPIO_SetHigh(Hub_Step_Pin);
         McuWait_Waitus(maxpause);
     }
-    McuWait_Waitms(100);
+    McuWait_Waitms(300);
     // direction
     McuGPIO_SetHigh(Hub_Dir_Pin);
     //nach oben fahren

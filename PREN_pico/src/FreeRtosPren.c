@@ -13,6 +13,10 @@
 //Steps für 90 GRad
 #define STEPS_FOR_NINETEEN_DEGRES (67)
 
+//Stromsensor
+extern int Stromwert5V;
+extern int Stromwert12V;
+
 //Ringbuffer
 extern McuRB_Handle_t Ringbuffer;
 char Befehl[5];
@@ -125,6 +129,19 @@ void CommandEnd(void){  // Alles für den Befehl End. Herunterfahren und zusamme
     //Hub_Bewegung(false, 450);
     Hub_Ende();
     Lautsprecher(Lautsprecher_Pin);
+    
+    // Umwandlung in String und Auslesung des Sensors
+    static char result_str_5V[5] = "";
+    sprintf(result_str_5V, "%d", Stromwert5V);
+
+    // Umwandlung in String und Auslesung des Sensors
+    static char result_str_12V[5] = "";
+    sprintf(result_str_12V, "%d", Stromwert12V);
+
+    uart_send(result_str_5V);
+    uart_send("\n\r");
+    uart_send(result_str_12V);
+    uart_send("\n\r");
 }
 
 void CommandPos(void){  // Alles für den Befehl Pos. Color muss noch ausgewertet werden
@@ -138,24 +155,23 @@ void CommandPos(void){  // Alles für den Befehl Pos. Color muss noch ausgewerte
 
 static void Strommessung(void *pv) {
     for(;;){
-        vTaskDelay(pdMS_TO_TICKS(500));
-        //TODO Strommessung
-        //static char Wert5V[4] = ""; // String zum Speichern des Werts
-        //static char Wert12V[4] = ""; // String zum Speichern des Werts
-            
-        // Umwandlung in String und Auslesung des Sensors
-        static char result_str_5V[4] = "";
-        sprintf(result_str_5V, "%d", read_Sensor_5V());
+        vTaskDelay(pdMS_TO_TICKS(1));
+        
+        Stromwert5V += read_Sensor_5V();
+        Stromwert12V += read_Sensor_12V();
+    }
+}
 
-        // Umwandlung in String und Auslesung des Sensors
-        static char result_str_12V[4] = "";
-        sprintf(result_str_12V, "%d", read_Sensor_12V());
-
-        // Den Wert schicken
-        uart_send(result_str_5V);
-        uart_send("\n\r");
-        uart_send(result_str_12V);
-        uart_send("\n\r");
+void InitTaskStrommessung(void){
+    if(xTaskCreate(Strommessung,
+    "Strommessung",
+    600/sizeof(StackType_t),
+    (void*)NULL,
+    tskIDLE_PRIORITY+3,
+    (TaskHandle_t*)NULL
+    ) != pdPASS)
+    {
+        for(;;){} 
     }
 }
 
@@ -176,7 +192,8 @@ static void Ansteuerung(void *pv) {
                         CommandPos();
                     }
                 }
-            } else if (ElementRingBuffer == 'E'){
+            } 
+            else if (ElementRingBuffer == 'E'){
                 McuRB_Get(Ringbuffer,&ElementRingBuffer);
                 if(ElementRingBuffer == 'n'){
                     McuRB_Get(Ringbuffer,&ElementRingBuffer);
@@ -185,24 +202,14 @@ static void Ansteuerung(void *pv) {
                         CommandEnd();
                     }
                 }
-            // } else {
-            //     while(McuRB_Peek())
+            } 
+            else if(ElementRingBuffer == 'S'){
+                McuRB_Get(Ringbuffer,&ElementRingBuffer);
+                if(ElementRingBuffer == 't'){
+                    InitTaskStrommessung();
+                }
             }
         }
-        //uart_send("OK");
-    }
-}
-
-void InitTaskStrommessung(void){
-    if(xTaskCreate(Strommessung,
-    "Strommessung",
-    600/sizeof(StackType_t),
-    (void*)NULL,
-    tskIDLE_PRIORITY+3,
-    (TaskHandle_t*)NULL
-    ) != pdPASS)
-    {
-        for(;;){} 
     }
 }
 
@@ -222,6 +229,5 @@ void InitTaskAnsteuerung(void){
 void FreeRtosInit(void){
     McuRTOS_Init();
     InitTaskAnsteuerung();
-    InitTaskStrommessung();
 }
 

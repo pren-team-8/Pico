@@ -16,6 +16,10 @@
 
 #define DEBUG (0)
 
+//Stromwert
+int Stromwert5V;
+int Stromwert12V;
+
 //Ringbuffer
 McuRB_Handle_t Ringbuffer = NULL;
 McuRB_Handle_t UartReceiveBuffer = NULL;
